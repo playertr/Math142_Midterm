@@ -1,11 +1,6 @@
 % ProcessIMUDataJ825R.m
-% Primarily written by Erik Spjut
+% Tim Player's modifications of Professor Erik Spjut's rocketry code
 % Last modified by Tim Player 3/28/2019 tplayer@hmc.edu
-% In cooperation with the marine brokers at Wells Fargo Insurance
-% (That is a joke -- that message is broadcast by  NOAA Weather Radio 
-% Station WWG24 in Seattle)
-% Actually in collobation with the E178 class
-
 %% Toggle separate figures
 separateFigs = true;
 
@@ -236,9 +231,9 @@ ylabel('Rotation Rate (°/s)')
 legend('\omega_z', '\omega_x', '\omega_y')
 
 %% GetAccelData
-timeAccel=transpose(AIM_Data.time_1(isfinite(AIM_Data.time_1)));
+timeAccel=transpose(AIM_Data.time_2(isfinite(AIM_Data.time_2)));
 accelZ=transpose(AIM_Data.acceleration(isfinite(AIM_Data.acceleration)));
-timeAccelLat=transpose(AIM_Data.time_2(isfinite(AIM_Data.time_2)));
+timeAccelLat=transpose(AIM_Data.time_3(isfinite(AIM_Data.time_3)));
 accelX=transpose(AIM_Data.lat_XAccel_(isfinite(AIM_Data.lat_XAccel_)));
 accelY=transpose(AIM_Data.lat_YAccel_(isfinite(AIM_Data.lat_YAccel_)));
 
@@ -603,7 +598,7 @@ legend('v_z', 'v_{tot}','v_{1D}', ...
     'v_{zK}', 'v_{totK}','v_{1DK}')
 
 %% GetAltimeterdata
-timeAlt=transpose(AIM_Data.time_7(isfinite(AIM_Data.time_7)));
+timeAlt=transpose(AIM_Data.time_1(isfinite(AIM_Data.time_1)));
 Pdata=transpose(AIM_Data.pressure(isfinite(AIM_Data.pressure)));
 altMSL=transpose(AIM_Data.PressureMSL(isfinite(AIM_Data.PressureMSL)));
 altAGL=transpose(AIM_Data.PressureAGL(isfinite(AIM_Data.PressureAGL)));
@@ -754,6 +749,14 @@ legend('Local Acceleration - K', 'Local Velocity - K');
 %calculate, plot thrust curve
 [T, mr, time] = calcThrust(boostAccelLocVecK(3,:)', boostVelLocVecK(3,:)', sp); %note transpose
 
+%% Exploratory plotting (Tim, 10/29)
+plot3(posGlobVec(1,1:n), posGlobVec(2,1:n), posGlobVec(3,1:n));
+axis([-1250 1250 -1250 1250 0 2500])
+hold on
+plot3(posGlobVecK(1,1:n), posGlobVecK(2,1:n), posGlobVecK(3,1:n), 'o');
+scatter3(latDel, longDel, GPSAGL)
+
+
 %% Calculates thrust and mass curves given acceleration and velocity curves
 %The math behind the dynamics is at 
 % https://www.overleaf.com/9711582518ykhhfxgxryhb
@@ -862,4 +865,5 @@ end
 % It would be interesting to compare the performance of trapezoid integration
 % to Kalman state estimation, or other schemes such as a particle filter,
 % EKF, or other estimator.
+
 
